@@ -1,0 +1,13 @@
+#{extends 'main.html' /}
+#{set title:'getModels.html' /}
+
+<select id="brand1">
+	            #{list items:models, as:'mobilephone'}
+	                <option name="model" id="model" value="${mobilephone.id}">${mobilephone.modelname}</option>
+	            #{/list}
+		</select>
+
+<h1> ${models ?: 'yok'}!</h1>
+
+
+<a href="@{Application.index()}">Back to form</a>

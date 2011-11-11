@@ -1,0 +1,79 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+
+<table>
+	<tr>
+		<td>
+			<h2>Marka-Model:<br></h2>
+			<input type="text" id="phone" size="50" class="erasable" />
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<h2>Etiketler:<br></h2>
+			<input type="text" id="comment1" size="30" class="erasable"/><br>
+			<input type="text" id="comment2" size="30" class="erasable"/><br>
+			<input type="text" id="comment3" size="30" class="erasable"/><br>
+			<input type="text" id="comment4" size="30" class="erasable"/><br>
+			<input type="text" id="comment5" size="30" class="erasable"/><br>
+			<input type="button" id="createComment" size="30" value="Gönder" />
+		</td>
+	</tr>
+</table>
+
+
+
+
+<script>
+var currentMobileID = -1;
+$("#phone").autocomplete({
+	source: function(request, response) {
+		$.ajax({
+			url: "@{Application.mobilephones()}",
+			dataType: "json",
+			data: {
+				term: request.term
+			},
+			success: function(data) {
+				if(data == null || data == "")
+					document.getElementById('phone').value = "";
+				else{
+				response ($.map(data, function(item) {					
+					return {
+						label:item.modelName,
+						value:item.modelName,
+						id:item.id
+					}					
+				}));
+				}
+			}
+		});	
+	},
+	minlength: 2
+});	
+$( "#phone" ).bind( "autocompleteselect", function(event, ui) {
+  currentMobileID = ui.item.id;
+});
+$("#createComment").click(function(){
+		var phoneid = currentMobileID;
+		var contents = [$('#comment1').val(),$('#comment2').val(),$('#comment3').val(),
+		$('#comment4').val(),$('#comment5').val()];		
+		
+		$.ajax({
+			type: 'GET',
+			url: "@{Application.createComment()}",
+			dataType: "json",
+			data: {
+				phoneid: phoneid,				
+				contents: contents
+			},
+			success: function (data) {
+			window.alert("Bilgiler kaydedildi. Teşekkürler.");
+			$('.erasable').val("");
+			}			
+		});	
+		return false;	
+});
+
+</script>
